@@ -46,6 +46,8 @@ group :development, :test do
   gem 'factory_girl_rails'
 
   gem 'faker'
+
+  gem 'pry'
 end
 
 group :test do
@@ -54,6 +56,9 @@ group :test do
   gem 'rspec-rails'
 
   gem 'shoulda-matchers', '2.5.0'
+
+  gem 'database_cleaner', :github => 'bmabey/database_cleaner'
+
 end
 
 gem 'validates_timeliness'
