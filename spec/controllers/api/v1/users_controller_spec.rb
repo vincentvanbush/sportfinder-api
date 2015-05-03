@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Api::V1::UsersController, type: :controller do
-  before(:each) { request.headers['Accept'] = "application/vnd.marketplace.v1" }
+  before(:each) { request.headers['Accept'] = "application/vnd.scorify.v1" }
 
   describe "GET #show" do
 
@@ -14,7 +14,7 @@ describe Api::V1::UsersController, type: :controller do
 
       it "returns the information about a reporter on a hash" do
         user_response = JSON.parse(response.body, symbolize_names: true)
-        expect(user_response[:email]).to eql @user.email
+        expect(user_response[:user][:email]).to eql @user.email
       end
 
       it { should respond_with 200 }
@@ -33,12 +33,13 @@ describe Api::V1::UsersController, type: :controller do
   context "when is successfully created" do
     before(:each) do
       @user_attributes = FactoryGirl.attributes_for :user
+      print @user_attributes.to_json
       post :create, { user: @user_attributes }, format: :json
     end
 
     it "renders the json representation for the user record just created" do
       user_response = JSON.parse(response.body, symbolize_names: true)
-      expect(user_response[:email]).to eql @user_attributes[:email]
+      expect(user_response[:user][:email]).to eql @user_attributes[:email]
     end
 
     it { should respond_with 201 }
