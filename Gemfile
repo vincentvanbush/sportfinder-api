@@ -59,3 +59,5 @@ end
 gem 'validates_timeliness'
 
 gem 'devise'
+
+gem 'active_model_serializers', git: 'https://github.com/rails-api/active_model_serializers.git', branch: '0-8-stable'
