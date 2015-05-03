@@ -28,6 +28,6 @@ module ScorifyApi
 
     config.autoload_paths += %W(\#{config.root}/lib)
 
-    config.exceptions_app = self.routes
+    # config.exceptions_app = self.routes
   end
 end
