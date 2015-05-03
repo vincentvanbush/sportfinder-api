@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby '2.1.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.0'
+gem 'rails', '4.2.1'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -45,13 +45,15 @@ group :development, :test do
 
   gem 'factory_girl_rails'
 
+  gem 'faker'
+end
+
+group :test do
+  gem 'minitest'
+
   gem 'rspec-rails'
 
-  gem 'shoulda-matchers'
-
-  gem 'factory_girl_rails'
-
-  gem 'faker'
+  gem 'shoulda-matchers', '2.5.0'
 end
 
 gem 'validates_timeliness'
