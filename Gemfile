@@ -56,6 +56,7 @@ group :test do
   gem 'minitest'
 
   gem 'rspec-rails'
+  gem 'rspec-collection_matchers'
 
   gem 'shoulda-matchers', '2.5.0'
 
