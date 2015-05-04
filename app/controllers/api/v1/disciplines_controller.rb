@@ -10,5 +10,8 @@ class Api::V1::DisciplinesController < ApplicationController
     end
   end
 
-  
+  def index
+    respond_with Discipline.all
+  end
+
 end

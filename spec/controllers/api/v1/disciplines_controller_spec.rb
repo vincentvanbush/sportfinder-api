@@ -24,4 +24,18 @@ RSpec.describe Api::V1::DisciplinesController, type: :controller do
       it { should respond_with 404 }
     end
   end
+
+  describe "GET #index" do
+    before(:each) do
+      4.times { FactoryGirl.create :discipline }
+      get :index
+    end
+
+    it "returns all disciplines" do
+      user_response = json_response
+      expect(user_response[:disciplines]).to have_exactly(4).items
+    end
+
+    it { should respond_with 200 }
+  end
 end
