@@ -7,7 +7,9 @@ Rails.application.routes.draw do
               constraints: ApiConstraints.new(version: 1, default: true) do
       resources :users, only: [:show, :create, :update, :destroy]
       resources :disciplines, only: [:show, :index] do
-        resources :events, only: [:show, :index]
+        resources :events, only: [:show, :index, :create, :update, :destroy] do
+          resources :messages, only: [:show, :index, :create, :update, :destroy]
+        end
       end
     end
   end
