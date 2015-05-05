@@ -1,6 +1,7 @@
 class Event
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Slug
 
   belongs_to :discipline
   belongs_to :user
@@ -10,6 +11,7 @@ class Event
   embeds_many :votes
 
   field :title, type: String
+  slug :title
   field :description, type: String
   field :venue, type: String
   field :start_date, type: DateTime
@@ -19,7 +21,9 @@ class Event
   validates :description, length: { maximum: 200 }
   validates_presence_of :venue
   validates_presence_of :start_date
-  validates_date :start_date, on_or_after: :created_at
+  validates_date :start_date, on_or_after: ->{
+    self.respond_to?(:created_at) ? self.created_at : DateTime.now
+  }
   validates_presence_of :finished?
 
   validates_presence_of :user
