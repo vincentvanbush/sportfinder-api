@@ -7,6 +7,7 @@ class Event
   belongs_to :user
   embeds_many :messages
   embeds_many :contenders
+  validates_presence_of :contenders
   embeds_many :comments
   embeds_many :votes
 
@@ -21,9 +22,7 @@ class Event
   validates :description, length: { maximum: 200 }
   validates_presence_of :venue
   validates_presence_of :start_date
-  validates_date :start_date, on_or_after: ->{
-    self.respond_to?(:created_at) ? self.created_at : DateTime.now
-  }
+  validates_date :start_date, on_or_after: ->{ DateTime.now }
   validates_presence_of :finished?
 
   validates_presence_of :user
