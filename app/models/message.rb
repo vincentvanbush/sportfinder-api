@@ -5,4 +5,9 @@ class Message
   embedded_in :event
 
   field :content, type: String
+  field :attachment_url, type: String
+
+  scope :after, ->(datetime) {
+    where(:created_at.gt => datetime)
+  }
 end
