@@ -7,11 +7,14 @@ class Api::V1::EventsController < ApplicationController
       not_found
     else
       event = discipline.events.find(params[:id])
-      if event.present?
-        respond_with event
-      else
-        not_found
-      end
+      respond_with event if event.present?
+      not_found if event.nil?
     end
+  end
+
+  def index
+    discipline = Discipline.find(params[:discipline_id])
+    respond_with discipline.events.all if discipline.present?
+    not_found if discipline.nil?
   end
 end

@@ -30,4 +30,26 @@ RSpec.describe Api::V1::EventsController, type: :controller do
       it { should respond_with 404 }
     end
   end
+
+  describe 'GET #index' do
+    context 'for a discipline that exists' do
+      before do
+        @discipline = FactoryGirl.create :discipline
+        5.times { FactoryGirl.create :event, discipline: @discipline }
+        get :index, discipline_id: @discipline.slug
+      end
+
+      it "returns all events" do
+        user_response = json_response
+        expect(user_response[:events]).to have_exactly(5).items
+      end
+
+      it { should respond_with 200 }
+    end
+
+    context 'for a nonexistent discipline' do
+      before { get :index, discipline_id: 'blablbbalbalbal' }
+      it { should respond_with 404 }
+    end
+  end
 end
