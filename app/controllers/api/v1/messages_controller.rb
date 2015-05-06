@@ -28,9 +28,26 @@ class Api::V1::MessagesController < ApplicationController
     end
   end
 
+  def update
+    discipline = Discipline.find(params[:discipline_id])
+    not_found && return unless discipline.present?
+    event = discipline.events.find(params[:event_id])
+    not_found && return unless event.present?
+    message = event.messages.find(params[:id])
+    not_found && return unless message.present?
+    
+    if message.update(message_params)
+      render json: message,
+             status: 200,
+             location: api_discipline_event_message_url(discipline, event, message)
+    else
+      render json: { errors: message.errors }, status: 422
+    end
+  end
+
   private
 
     def message_params
-      params.require(:message).permit(:content, :attachment_url, :discipline_id, :event_id)
+      params.require(:message).permit(:content, :attachment_url)
     end
 end

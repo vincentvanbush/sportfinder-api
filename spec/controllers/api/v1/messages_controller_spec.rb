@@ -89,4 +89,75 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
       end
     end
   end
+
+  describe 'PUT/PATCH #update' do
+    let(:message) { FactoryGirl.create :message }
+    context 'when is successfully updated' do
+      before do
+        patch :update, { discipline_id: message.event.discipline.slug,
+                         event_id: message.event.slug,
+                         id: message.id,
+                         message: { content: 'New content' } }
+      end
+
+      it 'renders the json repr for the updated message' do
+        expect(json_response[:message][:content]).to eql 'New content'
+      end
+
+      it { should respond_with 200 }
+    end
+
+    context 'when is not updated' do
+      context 'because of nonexistent' do
+        context 'discipline' do
+          before do
+            patch :update, { discipline_id: 'blabla',
+                             event_id: 'benis',
+                             id: 'fug',
+                             message: { content: 'benis' } }
+          end
+          it { should respond_with 404 }
+        end
+
+        context 'event' do
+          before do
+            patch :update, { discipline_id: message.event.discipline.slug,
+                             event_id: 'benis',
+                             id: 'fug',
+                             message: { content: 'benis' } }
+          end
+          it { should respond_with 404 }
+        end
+
+        context 'message' do
+          before do
+            patch :update, { discipline_id: message.event.discipline.slug,
+                             event_id: message.event.slug,
+                             id: 'fug',
+                             message: { content: 'benis' } }
+          end
+          it { should respond_with 404 }
+        end
+      end
+
+      context 'becaue of validation errors' do
+        let(:invalid_attrs) { {content: nil, attachment_url: 'a' * 300} }
+        before do
+          patch :update, { discipline_id: message.event.discipline.slug,
+                           event_id: message.event.slug,
+                           id: message.id,
+                           message: invalid_attrs }
+        end
+
+        it "renders an errors json" do
+          expect(json_response).to have_key(:errors)
+          expect(json_response[:errors]).to have_key(:content)
+          expect(json_response[:errors]).to have_key(:attachment_url)
+        end
+
+        it { should respond_with 422 }
+      end
+    end
+
+  end
 end
