@@ -32,7 +32,6 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
       it 'returns only messages after the time' do
         expected_contents = event.messages.after(after).collect { |m| m.content }
         actual_contents = json_response[:messages].collect { |m| m[:content] }
-        binding.pry
         expect(actual_contents).to match_array(expected_contents)
       end
     end

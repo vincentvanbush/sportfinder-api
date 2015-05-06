@@ -9,7 +9,6 @@ class Api::V1::MessagesController < ApplicationController
 
     messages = event.messages
     messages = messages.after(params[:after]) if params[:after]
-    binding.pry
     respond_with messages
   end
 end
