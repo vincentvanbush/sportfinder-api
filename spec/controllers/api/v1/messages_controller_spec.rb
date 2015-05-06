@@ -37,4 +37,56 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
     end
 
   end
+
+  describe 'POST #create' do
+    let(:message_attributes) { FactoryGirl.attributes_for :message }
+
+    context 'when is successfully created' do
+      let(:event) { FactoryGirl.create :event }
+      before do
+        post :create, message: message_attributes, discipline_id: event.discipline.slug, event_id: event.slug
+      end
+
+      it 'renders the json repr for the created message' do
+        expect(json_response[:message][:content]).to eql message_attributes[:content]
+      end
+
+      it { should respond_with 201 }
+    end
+
+    context 'when is not created' do
+      context 'because of nonexistent' do
+        context 'discipline' do
+          before do
+            post :create, message: message_attributes, discipline_id: 'blablabla', event_id: 'asdf'
+          end
+          it { should respond_with 404 }
+        end
+
+        context 'event' do
+          before do
+            discipline = FactoryGirl.create :discipline
+            post :create, message: message_attributes, discipline_id: discipline.slug, event_id: 'asdf'
+          end
+          it { should respond_with 404 }
+        end
+      end
+
+      context 'becaue of validation errors' do
+        let(:event) { FactoryGirl.create :event }
+        let(:invalid_attrs) { {content: nil, attachment_url: 'a' * 300} }
+        before do
+          post :create, message: invalid_attrs, discipline_id: event.discipline.slug, event_id: event.slug
+        end
+
+        it "renders an errors json" do
+          expect(json_response).to have_key(:errors)
+          expect(json_response[:errors]).to have_key(:content)
+          expect(json_response[:errors]).to have_key(:attachment_url)
+        end
+
+        it { should respond_with 422 }
+      end
+    end
+  end
 end
