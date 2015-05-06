@@ -4,13 +4,13 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
 
   describe 'GET #index' do
     let(:event) { FactoryGirl.create :event }
-    let(:now) { DateTime.now }
     before do
+      now = DateTime.now
       5.times do |i|
          FactoryGirl.create :message,
                             event: event,
-                            created_at: now + i.minutes,
-                            updated_at: now + i.minutes
+                            created_at: now + i.hours,
+                            updated_at: now + i.hours
       end
     end
 
@@ -23,7 +23,7 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
     end
 
     context 'with specified time filter' do
-      let(:after) { event.messages[2].created_at }
+      let!(:after) { event.messages[2].created_at.to_s }
       before do
         get :index, discipline_id: event.discipline.slug, event_id: event.slug,
             after: after
@@ -32,6 +32,7 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
       it 'returns only messages after the time' do
         expected_contents = event.messages.after(after).collect { |m| m.content }
         actual_contents = json_response[:messages].collect { |m| m[:content] }
+        binding.pry
         expect(actual_contents).to match_array(expected_contents)
       end
     end
