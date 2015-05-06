@@ -8,7 +8,7 @@ Rails.application.routes.draw do
       resources :users, only: [:show, :create, :update, :destroy]
       resources :disciplines, only: [:show, :index] do
         resources :events, only: [:show, :index, :create, :update, :destroy] do
-          resources :messages, only: [:show, :index, :create, :update, :destroy]
+          resources :messages, only: [:index, :create, :update, :destroy]
         end
       end
     end

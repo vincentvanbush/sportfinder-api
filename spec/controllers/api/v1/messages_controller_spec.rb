@@ -160,4 +160,12 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
     end
 
   end
+
+  describe 'DELETE #destroy' do
+    let(:message) { FactoryGirl.create :message }
+    before { delete :destroy, { discipline_id: message.event.discipline.slug,
+                                event_id: message.event.slug,
+                                id: message.id } }
+    it { should respond_with 204 }
+  end
 end
