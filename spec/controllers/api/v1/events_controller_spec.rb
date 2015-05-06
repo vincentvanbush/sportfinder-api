@@ -52,4 +52,66 @@ RSpec.describe Api::V1::EventsController, type: :controller do
       it { should respond_with 404 }
     end
   end
+
+  describe 'POST #create' do
+    context 'when successfully created' do
+      let(:discipline) { FactoryGirl.create :discipline, title: 'football' }
+      let(:event_attributes) { FactoryGirl.attributes_for :event }
+      before do
+        post :create, { discipline_id: discipline.slug,
+                        event: event_attributes }
+      end
+      describe 'the json response' do
+        it 'contains info for the created event' do
+          expect(json_response[:event][:title]).to eql event_attributes[:title]
+        end
+        it 'nests info about contenders' do
+          expect(json_response[:event]).to have_key(:contenders)
+          expect(json_response[:event][:contenders].length).to eql(2)
+        end
+      end
+
+      it { should respond_with 201 }
+    end
+
+    context 'when is not created' do
+      context 'due to unknown discipline' do
+        let(:unknown_discipline) { FactoryGirl.create :discipline, title: 'shitball' }
+        let(:event_attributes) { FactoryGirl.attributes_for :event }
+        before do
+          post :create, { discipline_id: unknown_discipline.slug,
+                          event: event_attributes }
+        end
+        it { should respond_with 422 }
+      end
+
+      context 'due to nonexistent discipline' do
+        let(:event_attributes) { FactoryGirl.attributes_for :event }
+        before do
+          post :create, { discipline_id: 'benis',
+                          event: event_attributes }
+        end
+        it { should respond_with 404 }
+      end
+
+      context 'due to validation errors' do
+        let(:discipline) { FactoryGirl.create :discipline, title: 'football' }
+        let(:event_attributes) { FactoryGirl.attributes_for :event,
+                                 title: nil,
+                                 description: ['a'] * 500 }
+        before do
+          post :create, { discipline_id: discipline.slug,
+                          event: event_attributes }
+        end
+
+        it 'should contain error info' do
+          expect(json_response).to have_key(:errors)
+          expect(json_response).to have_key(:title)
+          expect(json_response).to have_key(:description)
+        end
+
+        it { should respond_with 422 }
+      end
+    end
+  end
 end
