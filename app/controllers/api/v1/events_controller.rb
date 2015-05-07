@@ -38,7 +38,20 @@ class Api::V1::EventsController < ApplicationController
 
   private
 
+    def contender_params_array(discipline_id)
+      contender_params = [:title]
+      if params[:discipline_id].present?
+        discipline = Discipline.find(params[:discipline_id])
+        title = discipline.title if discipline.present?
+        contender_params << { squad_members: [] } if ['football', 'volleyball', 'basketball'].include?(title)
+        contender_params << :score << { partial_scores: [] } if ['volleyball', 'tennis'].include?(title)
+        contender_params << :total_time if ['race'].include?(title)
+      end
+      return contender_params
+    end
+
     def event_params
+      contender_params = contender_params_array(params[:discipline_id])
       params.require(:event).permit(:discipline_id,
                                     :user_id,
                                     :title,
@@ -46,6 +59,6 @@ class Api::V1::EventsController < ApplicationController
                                     :venue,
                                     :start_date,
                                     :finished,
-                                    { contenders: :title })
+                                    { contenders: contender_params })
     end
 end

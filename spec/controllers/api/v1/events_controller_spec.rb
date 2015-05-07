@@ -57,11 +57,12 @@ RSpec.describe Api::V1::EventsController, type: :controller do
     let(:user) { FactoryGirl.create :user }
     context 'when successfully created' do
       let(:discipline) { FactoryGirl.create :discipline, title: 'football' }
-      let(:event_attributes) { FactoryGirl.attributes_for(:event)
-                               .merge({ contenders: [{ title: 'benis' },
-                                                     { title: 'coprobo' }]
-                                      })
-                             }
+      let(:event_attributes) do
+        team1 = { title: 'Arsenal', squad_members: ['Szczesny', 'Sanchez', 'Giroud']}
+        team2 = { title: 'Liverpool', squad_members: ['Mignolet', 'Gerrard', 'Sterling']}
+        FactoryGirl.attributes_for(:event)
+                               .merge({ contenders: [team1, team2] })
+      end
       before do
         post :create, { discipline_id: discipline.slug,
                         user_id: user.id,
@@ -74,6 +75,8 @@ RSpec.describe Api::V1::EventsController, type: :controller do
         it 'nests info about contenders' do
           expect(json_response[:event]).to have_key(:contenders)
           expect(json_response[:event][:contenders].length).to eql(2)
+          expect(json_response[:event][:contenders][0][:title]).to eql('Arsenal')
+          expect(json_response[:event][:contenders][0][:squad_members]).to include('Szczesny')
         end
       end
 
