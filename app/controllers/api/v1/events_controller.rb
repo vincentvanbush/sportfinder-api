@@ -21,7 +21,7 @@ class Api::V1::EventsController < ApplicationController
   def create
     discipline = Discipline.find(params[:discipline_id])
     not_found && return unless discipline.present?
-    user = User.find(params[:user_id])
+    user = User.find(params[:user_id]) # TODO bind this with current_user!!!
     not_found && return unless user.present?
 
     event = discipline.events.new(event_params)
