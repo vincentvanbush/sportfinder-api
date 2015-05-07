@@ -54,11 +54,17 @@ RSpec.describe Api::V1::EventsController, type: :controller do
   end
 
   describe 'POST #create' do
+    let(:user) { FactoryGirl.create :user }
     context 'when successfully created' do
       let(:discipline) { FactoryGirl.create :discipline, title: 'football' }
-      let(:event_attributes) { FactoryGirl.attributes_for :event }
+      let(:event_attributes) { FactoryGirl.attributes_for(:event)
+                               .merge({ contenders: [{ title: 'benis' },
+                                                     { title: 'coprobo' }]
+                                      })
+                             }
       before do
         post :create, { discipline_id: discipline.slug,
+                        user_id: user.id,
                         event: event_attributes }
       end
       describe 'the json response' do
@@ -77,18 +83,20 @@ RSpec.describe Api::V1::EventsController, type: :controller do
     context 'when is not created' do
       context 'due to unknown discipline' do
         let(:unknown_discipline) { FactoryGirl.create :discipline, title: 'shitball' }
-        let(:event_attributes) { FactoryGirl.attributes_for :event }
+        let(:event_attributes) { FactoryGirl.attributes_for(:event) }
         before do
           post :create, { discipline_id: unknown_discipline.slug,
+                          user_id: user.id,
                           event: event_attributes }
         end
         it { should respond_with 422 }
       end
 
       context 'due to nonexistent discipline' do
-        let(:event_attributes) { FactoryGirl.attributes_for :event }
+        let(:event_attributes) { FactoryGirl.attributes_for(:event) }
         before do
           post :create, { discipline_id: 'benis',
+                          user_id: user.id,
                           event: event_attributes }
         end
         it { should respond_with 404 }
@@ -96,18 +104,19 @@ RSpec.describe Api::V1::EventsController, type: :controller do
 
       context 'due to validation errors' do
         let(:discipline) { FactoryGirl.create :discipline, title: 'football' }
-        let(:event_attributes) { FactoryGirl.attributes_for :event,
+        let(:user) { FactoryGirl.create :user }
+        let(:event_attributes) { FactoryGirl.attributes_for(:event,
                                  title: nil,
-                                 description: ['a'] * 500 }
+                                 description: ['a'] * 500) }
         before do
           post :create, { discipline_id: discipline.slug,
+                          user_id: user.id,
                           event: event_attributes }
         end
 
         it 'should contain error info' do
           expect(json_response).to have_key(:errors)
-          expect(json_response).to have_key(:title)
-          expect(json_response).to have_key(:description)
+          expect(json_response[:errors]).to have_key(:title)
         end
 
         it { should respond_with 422 }

@@ -3,6 +3,7 @@ class EventSerializer < ActiveModel::Serializer
 
   # belongs_to :discipline
   has_one :user, serializer: EventUserSerializer
+  has_many :contenders
 
   def id
     object.id.to_s

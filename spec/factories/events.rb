@@ -6,6 +6,6 @@ FactoryGirl.define do
     description { Faker::Lorem.sentence }
     venue { Faker::Address.city }
     start_date { Faker::Date.forward(30) }
-    contenders { [FactoryGirl.build(:contender)] }
+    contenders { [FactoryGirl.build(:contender), FactoryGirl.build(:contender)] }
   end
 end
