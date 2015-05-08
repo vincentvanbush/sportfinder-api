@@ -6,6 +6,8 @@ RSpec.describe Api::V1::EventsController, type: :controller do
       before(:each) do
         @event = FactoryGirl.create :event
         3.times { c = FactoryGirl.create :comment, event: @event }
+        4.times { FactoryGirl.create :vote, event: @event, positive?: true }
+        2.times { FactoryGirl.create :vote, event: @event, positive?: false }
         get :show, discipline_id: @event.discipline.slug, id: @event.slug
       end
 
@@ -15,7 +17,6 @@ RSpec.describe Api::V1::EventsController, type: :controller do
 
       it 'nests the event\'s comments' do
         expect(json_response[:event]).to have_key(:comments)
-        binding.pry
         expect(json_response[:event][:comments].count).to eql(3)
       end
 
