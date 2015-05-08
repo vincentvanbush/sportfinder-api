@@ -27,4 +27,7 @@ class Event
 
   validates_presence_of :user
   validates_presence_of :discipline
+
+  scope :finished, ->{ where(finished?: true) }
+  scope :unfinished, ->{ where(finished?: false) }
 end
