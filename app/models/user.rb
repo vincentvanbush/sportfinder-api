@@ -35,4 +35,16 @@ class User
   # field :failed_attempts, type: Integer, default: 0 # Only if lock strategy is :failed_attempts
   # field :unlock_token,    type: String # Only if unlock strategy is :email or :both
   # field :locked_at,       type: Time
+
+  def votes_for
+    self.events.collect { |e| e.votes }.flatten
+  end
+
+  def positive_votes
+    votes_for.select { |v| v.positive? == true }.count
+  end
+
+  def negative_votes
+    votes_for.select { |v| v.positive? == false }.count
+  end
 end

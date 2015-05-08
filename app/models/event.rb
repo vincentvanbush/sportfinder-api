@@ -9,7 +9,7 @@ class Event
   embeds_many :contenders
   validates_presence_of :contenders
   embeds_many :comments
-  embeds_many :votes
+  has_many :votes
 
   field :title, type: String
   slug :title
@@ -29,4 +29,12 @@ class Event
   validates_presence_of :discipline
 
   scope :finished, ->(fin){ where(finished?: fin) }
+
+  def positive_votes
+    self.votes.where(positive?: true).count
+  end
+
+  def negative_votes
+    self.votes.where(positive?: false).count
+  end
 end
