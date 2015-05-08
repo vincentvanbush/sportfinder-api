@@ -3,7 +3,7 @@ class Comment
   include Mongoid::Timestamps
 
   embedded_in :event
-  has_one :user
+  belongs_to :user
 
   field :content, type: String
 end

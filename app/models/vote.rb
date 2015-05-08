@@ -2,7 +2,7 @@ class Vote
   include Mongoid::Document
 
   embedded_in :event
-  has_one :user
+  belongs_to :user
 
   field :positive?, type: Boolean
 
