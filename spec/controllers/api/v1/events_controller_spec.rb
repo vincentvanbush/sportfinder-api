@@ -47,6 +47,28 @@ RSpec.describe Api::V1::EventsController, type: :controller do
       it { should respond_with 200 }
     end
 
+    context 'scoped' do
+      let(:discipline) { FactoryGirl.create :discipline }
+      before do
+        2.times { FactoryGirl.create :event, discipline: discipline, finished?: true }
+        3.times { FactoryGirl.create :event, discipline: discipline, finished?: false }
+      end
+
+      describe 'finished' do
+        before { get :index, discipline_id: discipline.slug, finished: true }
+        it 'returns 2 records' do
+          expect(json_response[:events]).to have_exactly(2).items
+        end
+      end
+
+      describe 'unfinished' do
+        before { get :index, discipline_id: discipline.slug, finished: false }
+        it 'returns 3 records' do
+          expect(json_response[:events]).to have_exactly(3).items
+        end
+      end
+    end
+
     context 'for a nonexistent discipline' do
       before { get :index, discipline_id: 'blablbbalbalbal' }
       it { should respond_with 404 }

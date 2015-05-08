@@ -27,22 +27,19 @@ describe Event do
     end
 
     describe '.finished' do
-      let(:returned_events) { Event.finished }
-      it 'returns 2 records' do
-        expect(returned_events.count).to eql(2)
+      let(:finished_events) { Event.finished(true) }
+      let(:unfinished_events) { Event.finished(false) }
+      it 'returns 2 records for true' do
+        expect(finished_events.count).to eql(2)
+      end
+      it 'returns 3 records for false' do
+        expect(unfinished_events.count).to eql(3)
       end
       it 'returns all records that are finished' do
-        returned_events.each { |e| expect(e.finished?).to eql(true) }
-      end
-    end
-
-    describe '.unfinished' do
-      let(:returned_events) { Event.unfinished }
-      it 'returns 3 records' do
-        expect(returned_events.count).to eql(3)
+        finished_events.each { |e| expect(e.finished?).to eql(true) }
       end
       it 'returns all records that are unfinished' do
-        returned_events.each { |e| expect(e.finished?).to eql(false) }
+        unfinished_events.each { |e| expect(e.finished?).to eql(false) }
       end
     end
   end

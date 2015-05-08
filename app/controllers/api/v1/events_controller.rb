@@ -14,8 +14,11 @@ class Api::V1::EventsController < ApplicationController
 
   def index
     discipline = Discipline.find(params[:discipline_id])
-    respond_with discipline.events.all if discipline.present?
-    not_found if discipline.nil?
+    not_found && return if discipline.nil?
+    events = discipline.events.all
+    events = events.finished(params[:finished]) if params.has_key?(:finished)
+    respond_with events
+
   end
 
   def create
