@@ -5,12 +5,18 @@ RSpec.describe Api::V1::EventsController, type: :controller do
     context "for an event that exists" do
       before(:each) do
         @event = FactoryGirl.create :event
+        3.times { c = FactoryGirl.create :comment, event: @event }
         get :show, discipline_id: @event.discipline.slug, id: @event.slug
       end
 
       it "returns the information about the event on a hash" do
-        user_response = json_response
-        expect(user_response[:event][:title]).to eql @event.title
+        expect(json_response[:event][:title]).to eql @event.title
+      end
+
+      it 'nests the event\'s comments' do
+        expect(json_response[:event]).to have_key(:comments)
+        binding.pry
+        expect(json_response[:event][:comments].count).to eql(3)
       end
 
       it { should respond_with 200 }
