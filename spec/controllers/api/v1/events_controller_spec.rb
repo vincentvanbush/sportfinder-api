@@ -33,15 +33,24 @@ RSpec.describe Api::V1::EventsController, type: :controller do
 
   describe 'GET #index' do
     context 'for a discipline that exists' do
+      let(:discipline) { FactoryGirl.create :discipline }
       before do
-        @discipline = FactoryGirl.create :discipline
-        5.times { FactoryGirl.create :event, discipline: @discipline }
-        get :index, discipline_id: @discipline.slug
+        5.times { FactoryGirl.create :event, discipline: discipline }
+        get :index, discipline_id: discipline.slug
       end
 
       it "returns all events" do
-        user_response = json_response
-        expect(user_response[:events]).to have_exactly(5).items
+        expect(json_response[:events]).to have_exactly(5).items
+      end
+
+      it 'contains pagination info' do
+        get :index, discipline_id: discipline.slug, page: 1, per_page: 2
+        expect(json_response[:events]).to have_exactly(2).items
+        expect(json_response).to have_key(:meta)
+        expect(json_response[:meta]).to have_key(:pagination)
+        expect(json_response[:meta][:pagination][:per_page]).to eql("2") # fails for integer
+        expect(json_response[:meta][:pagination][:total_pages]).to eql(3)
+        expect(json_response[:meta][:pagination][:total_objects]).to eql(5)
       end
 
       it { should respond_with 200 }
@@ -73,6 +82,7 @@ RSpec.describe Api::V1::EventsController, type: :controller do
       before { get :index, discipline_id: 'blablbbalbalbal' }
       it { should respond_with 404 }
     end
+
   end
 
   describe 'POST #create' do

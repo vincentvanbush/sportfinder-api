@@ -13,12 +13,16 @@ class Api::V1::EventsController < ApplicationController
   end
 
   def index
-    discipline = Discipline.find(params[:discipline_id])
+    discipline = Discipline.or({slugs: params[:discipline_id]},
+                               {id: params[:discipline_id]}).first
     not_found && return if discipline.nil?
     events = discipline.events.all
     events = events.finished(params[:finished]) if params.has_key?(:finished)
-    respond_with events
-
+    events = events.page(params[:page]).per(params[:per_page])
+    render json: events, meta: { pagination:
+                                   { per_page: params[:per_page],
+                                     total_pages: events.total_pages,
+                                     total_objects: events.total_count } }
   end
 
   def create
