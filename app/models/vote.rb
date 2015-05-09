@@ -9,4 +9,6 @@ class Vote
   validates_presence_of :event?
   validates_presence_of :positive?
   validates_presence_of :user?
+
+  validates :user, uniqueness: { scope: :event }
 end
