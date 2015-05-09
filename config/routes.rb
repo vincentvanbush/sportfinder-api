@@ -9,6 +9,8 @@ Rails.application.routes.draw do
       resources :disciplines, only: [:show, :index] do
         resources :events, only: [:show, :index, :create, :update, :destroy] do
           resources :messages, only: [:index, :create, :update, :destroy]
+          resources :votes, only: [:create]
+          resources :comments, only: [:create, :destroy]
         end
       end
     end
