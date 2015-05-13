@@ -10,7 +10,8 @@ class Message
   validates :content, presence: true, length: { maximum: 300 }
   validates :attachment_url, length: { maximum: 150 }
 
-  scope :after, ->(datetime) {
+  scope :after, ->(timestamp) {
+    datetime = DateTime.strptime(timestamp.to_s, '%s')
     where(:created_at.gt => datetime)
   }
 end

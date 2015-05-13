@@ -23,7 +23,7 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
     end
 
     context 'with specified time filter' do
-      let!(:after) { event.messages[2].created_at.to_s }
+      let!(:after) { event.messages[2].created_at.to_i }
       before do
         get :index, discipline_id: event.discipline.slug, event_id: event.slug,
             after: after
