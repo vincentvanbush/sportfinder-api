@@ -1,4 +1,5 @@
 class Api::V1::MessagesController < ApplicationController
+  before_action :authenticate_with_token!, only: [:create, :update, :destroy]
   respond_to :json
 
   def index

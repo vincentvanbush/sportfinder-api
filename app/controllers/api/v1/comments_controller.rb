@@ -1,4 +1,5 @@
 class Api::V1::CommentsController < ApplicationController
+  before_action :authenticate_with_token!, only: [:create, :destroy]
   respond_to :json
 
   def create

@@ -1,4 +1,6 @@
 class Api::V1::VotesController < ApplicationController
+  before_action :authenticate_with_token!, only: [:create]
+
   def create
     discipline = Discipline.find(params[:discipline_id])
     not_found && return unless discipline.present?

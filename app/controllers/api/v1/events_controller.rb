@@ -1,4 +1,5 @@
 class Api::V1::EventsController < ApplicationController
+  before_action :authenticate_with_token!, only: [:create]
   respond_to :json
 
   def show
@@ -26,14 +27,16 @@ class Api::V1::EventsController < ApplicationController
   end
 
   def create
+    byebug
     discipline = Discipline.find(params[:discipline_id])
     not_found && return unless discipline.present?
-    user = User.find(params[:user_id]) # TODO bind this with current_user!!!
-    not_found && return unless user.present?
+    # user = User.find(params[:user_id]) # TODO bind this with current_user!!!
+    # not_found && return unless user.present?
+    not_found && return unless current_user
 
     event = discipline.events.new(event_params)
     contenders_params = event_params[:contenders]
-    event.user = user
+    event.user = current_user
 
     if event.save
       render json: event, status: 201, location: api_discipline_event_url(discipline, event)
@@ -60,7 +63,7 @@ class Api::V1::EventsController < ApplicationController
     def event_params
       contender_params = contender_params_array(params[:discipline_id])
       params.require(:event).permit(:discipline_id,
-                                    :user_id,
+                                    # :user_id,
                                     :title,
                                     :description,
                                     :venue,
