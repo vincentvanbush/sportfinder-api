@@ -47,4 +47,18 @@ class User
   def negative_votes
     votes_for.select { |v| v.positive? == false }.count
   end
+
+  field :facebook_id,         type: String, default: ""
+  field :auth_token,          type: String, default: ""
+
+  validates_uniqueness_of :auth_token
+  
+
+  before_create :generate_authentication_token!
+
+  def generate_authentication_token!
+    begin
+     self.auth_token = Devise.friendly_token
+    end while User.where(auth_token: auth_token).exists?
+  end
 end
