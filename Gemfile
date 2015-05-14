@@ -71,3 +71,5 @@ gem 'devise'
 gem 'active_model_serializers', git: 'https://github.com/rails-api/active_model_serializers.git', branch: '0-8-stable'
 
 gem 'kaminari'
+gem 'doorkeeper'
+gem 'koala', '~> 2.0'
