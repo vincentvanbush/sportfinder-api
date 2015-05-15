@@ -26,7 +26,6 @@ class Api::V1::SessionsController < ApplicationController
 				credentials[:password] = SecureRandom.base64
 				credentials[:password_confirmation] = credentials[:password]
 				user = User.new(credentials)
-				byebug
 				if user.save
 					sign_in user, store: false
 					user.generate_authentication_token!
@@ -39,7 +38,6 @@ class Api::V1::SessionsController < ApplicationController
 			
 		elsif params[:session][:provider] == 'tweeter'
 		else
-			byebug
 			user_password = params[:session][:password]
 			user_email = params[:session][:email]
 			user = user_email.present? && User.find_by(email: user_email)
@@ -60,7 +58,6 @@ class Api::V1::SessionsController < ApplicationController
 		# user = User.find_by(auth_token: params[:id])
 		# user.generate_authentication_token!
 		# user.save
-		byebug
 		current_user.generate_authentication_token!
 		current_user.save
 		head 204

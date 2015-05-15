@@ -6,6 +6,9 @@ RSpec.describe Api::V1::VotesController, type: :controller do
   let(:positive_vote_attrs) { FactoryGirl.attributes_for :vote, positive?: true }
   let(:negative_vote_attrs) { FactoryGirl.attributes_for :vote, positive?: false }
 
+  before(:each) do 
+    api_authorization_header event.user.auth_token
+  end
   describe 'POST #create' do
     context 'when successfully created' do
       before do

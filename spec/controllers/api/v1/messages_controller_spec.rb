@@ -43,6 +43,11 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
 
     context 'when is successfully created' do
       let(:event) { FactoryGirl.create :event }
+
+      before(:each) do 
+        api_authorization_header event.user.auth_token
+      end
+
       before do
         post :create, message: message_attributes, discipline_id: event.discipline.slug, event_id: event.slug
       end
@@ -56,6 +61,12 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
 
     context 'when is not created' do
       context 'because of nonexistent' do
+        
+        let(:event) { FactoryGirl.create :event }
+        before(:each) do 
+          api_authorization_header event.user.auth_token
+        end
+
         context 'discipline' do
           before do
             post :create, message: message_attributes, discipline_id: 'blablabla', event_id: 'asdf'
@@ -74,6 +85,11 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
 
       context 'becaue of validation errors' do
         let(:event) { FactoryGirl.create :event }
+
+        before(:each) do 
+          api_authorization_header event.user.auth_token
+        end
+
         let(:invalid_attrs) { {content: nil, attachment_url: 'a' * 300} }
         before do
           post :create, message: invalid_attrs, discipline_id: event.discipline.slug, event_id: event.slug
@@ -92,6 +108,10 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
 
   describe 'PUT/PATCH #update' do
     let(:message) { FactoryGirl.create :message }
+
+    before(:each) do 
+      api_authorization_header message.event.user.auth_token
+    end
     context 'when is successfully updated' do
       before do
         patch :update, { discipline_id: message.event.discipline.slug,
@@ -163,6 +183,10 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
 
   describe 'DELETE #destroy' do
     let(:message) { FactoryGirl.create :message }
+
+    before(:each) do 
+      api_authorization_header message.event.user.auth_token
+    end
     before { delete :destroy, { discipline_id: message.event.discipline.slug,
                                 event_id: message.event.slug,
                                 id: message.id } }

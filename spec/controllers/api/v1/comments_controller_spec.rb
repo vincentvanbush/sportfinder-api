@@ -6,6 +6,11 @@ RSpec.describe Api::V1::CommentsController, type: :controller do
   let(:user) { FactoryGirl.create :user }
 
   describe "POST #create" do
+
+    before(:each) do 
+      api_authorization_header user.auth_token
+    end
+
     context 'when successfully created' do
       before do
         post :create,
@@ -46,6 +51,11 @@ RSpec.describe Api::V1::CommentsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+
+    before(:each) do 
+      api_authorization_header user.auth_token
+    end
+    
     let(:comment) { FactoryGirl.create :comment }
     before { delete :destroy, { discipline_id: comment.event.discipline.slug,
                                 event_id: comment.event.slug,

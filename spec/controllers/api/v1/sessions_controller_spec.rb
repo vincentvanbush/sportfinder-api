@@ -69,6 +69,7 @@ RSpec.describe Api::V1::SessionsController, type: :controller do
 	describe 'DELETE #destroy' do 
 		before(:each) do
 			@user = FactoryGirl.create :user
+			api_authorization_header @user.auth_token
 			sign_in @user#, store: false
 			delete :destroy, id: @user.auth_token
 		end

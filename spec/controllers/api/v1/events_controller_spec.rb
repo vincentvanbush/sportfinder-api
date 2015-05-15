@@ -94,6 +94,11 @@ RSpec.describe Api::V1::EventsController, type: :controller do
 
   describe 'POST #create' do
     let(:user) { FactoryGirl.create :user }
+
+    before(:each) do 
+      api_authorization_header user.auth_token
+    end
+    
     context 'when successfully created' do
       let(:discipline) { FactoryGirl.create :discipline, title: 'football' }
       let(:event_attributes) do

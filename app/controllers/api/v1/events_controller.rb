@@ -27,7 +27,6 @@ class Api::V1::EventsController < ApplicationController
   end
 
   def create
-    byebug
     discipline = Discipline.find(params[:discipline_id])
     not_found && return unless discipline.present?
     # user = User.find(params[:user_id]) # TODO bind this with current_user!!!
