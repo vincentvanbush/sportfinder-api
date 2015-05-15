@@ -62,7 +62,7 @@ class Api::V1::EventsController < ApplicationController
     def event_params
       contender_params = contender_params_array(params[:discipline_id])
       params.require(:event).permit(:discipline_id,
-                                    # :user_id,
+                                    :user_id,
                                     :title,
                                     :description,
                                     :venue,
