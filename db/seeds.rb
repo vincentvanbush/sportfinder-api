@@ -43,15 +43,13 @@ messages = []
 	)
 end
 
-puts 'Creating events...'
-events = []
-
+puts 'Creating events'
 100.times do |i|
 	discipline = disciplines.sample
 	user = users.sample
  	contender_params = []
  	contender_params << { squad_members: [] }
-	events << Event.create(
+	event = Event.new(
 		title: Faker::Lorem.sentence(2, false, 2),
 		description: Faker::Lorem.sentences(3),
 		venue: Faker::Lorem.sentence(2, false, 0),
@@ -61,4 +59,12 @@ events = []
 		messages: messages[i*3..i*3+2],
 		contenders: contender_params
 	)
+	comments = []
+	comments << Comment.new(
+		content: Faker::Lorem.sentence,
+		user: users.sample,
+		event: event
+	)
+	event.comments = comments
+	event.save
 end
