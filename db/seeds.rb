@@ -49,13 +49,19 @@ puts 'Creating events'
 	user = users.sample
  	contender_params = []
  	contender_params << { squad_members: [] }
+ 	if i % 2 == 0
+ 		fin = false
+ 	else
+ 		fin = true
+ 	end
 	event = Event.new(
 		title: Faker::Lorem.sentence(2, false, 2),
-		description: Faker::Lorem.sentences(3),
+		description: Faker::Lorem.sentence,
 		venue: Faker::Lorem.sentence(2, false, 0),
 		start_date: Faker::Time.forward(14),
 		user: user,
 		discipline: discipline,
+		finished?: fin,
 		messages: messages[i*3..i*3+2],
 		contenders: contender_params
 	)
