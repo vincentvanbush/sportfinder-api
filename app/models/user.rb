@@ -49,6 +49,7 @@ class User
   end
 
   field :facebook_id,         type: String, default: ""
+  field :twitter_id,          type: String, default: ""
   field :auth_token,          type: String, default: ""
 
   validates_uniqueness_of :auth_token

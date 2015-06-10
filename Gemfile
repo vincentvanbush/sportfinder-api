@@ -73,3 +73,9 @@ gem 'active_model_serializers', git: 'https://github.com/rails-api/active_model_
 gem 'kaminari'
 
 gem 'koala'
+gem 'twitter'
+# gem 'oauth'
+# gem 'authlogic', '2.1.6'
+# # set up oauth capabilities. Note: :lib is replaced with :require in rails 3
+# gem 'authlogic-oauth', '1.0.8', :require => 'authlogic_oauth'
+# gem 'oauth', '0.4.4'
