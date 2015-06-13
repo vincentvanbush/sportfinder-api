@@ -10,4 +10,8 @@ class ApplicationController < ActionController::Base
   def exception
     render :json => {:error => "internal-server-error"}.to_json, :status => 500
   end
+
+  def not_authorized
+  	render :json => {:error => "not-authorized"}.to_json, :status => 401
+  end
 end
