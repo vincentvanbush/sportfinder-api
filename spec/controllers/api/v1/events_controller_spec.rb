@@ -183,7 +183,7 @@ RSpec.describe Api::V1::EventsController, type: :controller do
       
       context 'plain values' do
         let(:event) { FactoryGirl.create :event, discipline: discipline, user: user }
-        let(:event_attributes) {{ title: "new_title", description: "new_description", finished?: true }}
+        let(:event_attributes) {{ title: "new_title", description: "new_description", finished: true }}
 
         before do
           patch :update, { discipline_id: discipline.slug,

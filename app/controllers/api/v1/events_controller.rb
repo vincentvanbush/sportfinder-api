@@ -49,7 +49,11 @@ class Api::V1::EventsController < ApplicationController
     not_found && return unless discipline.present?
     event = Event.find(params[:id])
     not_found && return unless event.present?
-    event.update(event_params)
+
+    event_par = event_params
+    event_par[:finished?] = event_par.delete :finished if event_par.has_key?(:finished)
+
+    event.update(event_par)
     if event.save
       render json: event, status: 201, location: api_discipline_event_url(discipline, event)
     else
@@ -79,7 +83,7 @@ class Api::V1::EventsController < ApplicationController
                                     :description,
                                     :venue,
                                     :start_date,
-                                    :finished?,
+                                    :finished,
                                     { contenders: contender_params })
     end
 end
