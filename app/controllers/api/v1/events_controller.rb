@@ -30,8 +30,7 @@ class Api::V1::EventsController < ApplicationController
     discipline = Discipline.find(params[:discipline_id])
     not_found && return unless discipline.present?
     # user = User.find(params[:user_id]) # TODO bind this with current_user!!!
-    # not_found && return unless user.present?
-    not_found && return unless current_user
+    not_authorized && return unless current_user
 
     event = discipline.events.new(event_params)
     contenders_params = event_params[:contenders]
@@ -43,6 +42,19 @@ class Api::V1::EventsController < ApplicationController
       render json: { errors: event.errors }, status: 422
     end
 
+  end
+
+  def update
+    discipline = Discipline.find(params[:discipline_id])
+    not_found && return unless discipline.present?
+    event = Event.find(params[:id])
+    not_found && return unless event.present?
+    event.update(event_params)
+    if event.save
+      render json: event, status: 201, location: api_discipline_event_url(discipline, event)
+    else
+      render json: { errors: event.errors }, status: 422
+    end
   end
 
   private
@@ -67,7 +79,7 @@ class Api::V1::EventsController < ApplicationController
                                     :description,
                                     :venue,
                                     :start_date,
-                                    :finished,
+                                    :finished?,
                                     { contenders: contender_params })
     end
 end

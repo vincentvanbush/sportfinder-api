@@ -170,4 +170,137 @@ RSpec.describe Api::V1::EventsController, type: :controller do
       end
     end
   end
+
+  describe 'PATCH #update' do
+    let(:user) { FactoryGirl.create :user }
+
+    before(:each) do 
+      api_authorization_header user.auth_token
+    end
+
+    context 'when successfully updated' do
+      let(:discipline) { FactoryGirl.create :discipline, title: 'football' }
+      
+      context 'plain values' do
+        let(:event) { FactoryGirl.create :event, discipline: discipline, user: user }
+        let(:event_attributes) {{ title: "new_title", description: "new_description", finished?: true }}
+
+        before do
+          patch :update, { discipline_id: discipline.slug,
+                          user_id: user.id,
+                          id: event.id,
+                          event: event_attributes}
+        end
+
+        it 'contains updated info about event' do
+          expect(json_response[:event][:title]).to eql "new_title"
+          expect(json_response[:event][:description]).to eql "new_description"
+          # line below solves problem of modifing finished? but event has key finished not finished? 
+          # despite that in event_serializer is finished? Why?
+          expect(json_response[:event][:finished]).to be true
+          
+
+        end
+
+        it { should respond_with 201 }
+      end
+
+      context 'contenders' do
+        let(:attrs) do
+          team1 = { title: 'Arsenal', squad_members: ['Mertesacker', 'Ramsey', 'Wilshire']}
+          team2 = { title: 'Liverpool', squad_members: ['Coutinho', 'Sturridge', 'Henderson']}
+        FactoryGirl.attributes_for(:event)
+                               .merge({ contenders: [team1, team2] })
+        end
+        before do
+          post :create, { discipline_id: discipline.slug,
+                        user_id: user.id,
+                        event: attrs }
+          @event = Event.first
+        end
+
+        
+
+        let(:event_attributes) do
+          { contenders: [{ title: 'Arsenal', squad_members: ['Szczesny', 'Sanchez', 'Giroud']},
+                         { title: 'Liverpool', squad_members: ['Mignolet', 'Gerrard', 'Sterling']}]}
+        end
+
+        before do
+          patch :update, { discipline_id: discipline.slug,
+                          user_id: user.id,
+                          id: @event.id,
+                          event: event_attributes }
+        end
+
+        it 'nests updated info about contenders' do
+          expect(json_response[:event]).to have_key(:contenders)
+          expect(json_response[:event][:contenders].length).to eql(2)
+          expect(json_response[:event][:contenders][0]).to have_key(:title)
+          expect(json_response[:event][:contenders][0]).to have_key(:squad_members)
+          expect(json_response[:event][:contenders][0]).not_to have_key(:partial_scores)
+          expect(json_response[:event][:contenders][0][:title]).to eql('Arsenal')
+          expect(json_response[:event][:contenders][0][:squad_members]).to include('Szczesny')
+          expect(json_response[:event][:contenders][1][:squad_members]).not_to include('Henderson')
+        end
+
+        it { should respond_with 201 }
+      end
+    end
+
+    context 'when is not updated' do
+      let(:discipline) { FactoryGirl.create :discipline, title: 'football' }
+      let(:event) { FactoryGirl.create :event, discipline: discipline, user: user }
+
+      context 'because of nonexistent' do
+        context 'discipline' do
+          before do
+            patch :update, {  discipline_id: 'farafara', 
+                              user_id: user.id,
+                              id: event.id,
+                              event: { title: 'just_a_title' }}
+          end
+
+          it { should respond_with 404 }
+        end
+
+        context 'event' do
+          before do
+            patch :update, {  discipline_id: discipline.id,
+                              user_id: user.id,
+                              id: 'fiki_miki',
+                              event: { title: 'huehuehue' }}
+          end
+
+          it { should respond_with 404 }
+        end
+      end
+               
+      context 'because of validation errors' do
+        context 'nil title' do
+          let(:invalid_attrs) {{ title: nil, description: 'a' * 20 }}
+          before do
+            patch :update, {  discipline_id: discipline.id,
+                              user_id: user.id,
+                              id: event.id,
+                              event: invalid_attrs }
+          end
+
+          it { should respond_with 422 }
+        end
+
+        context 'too long description' do
+          let(:invalid_attrs) {{ title: 'valid title', description: 'a' * 201 }}
+          before do
+            patch :update, {  discipline_id: discipline.id,
+                              user_id: user.id,
+                              id: event.id,
+                              event: invalid_attrs }
+          end
+
+          it { should respond_with 422 }
+        end
+      end
+    end
+  end
 end
