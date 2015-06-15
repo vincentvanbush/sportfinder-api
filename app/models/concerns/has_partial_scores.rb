@@ -2,6 +2,6 @@ module HasPartialScores
   extend ActiveSupport::Concern
 
   included do
-    field :partial_scores, type: Array
-  end
+    field :partial_scores, type: Hash
+	end
 end

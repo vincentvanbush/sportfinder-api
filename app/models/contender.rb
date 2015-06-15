@@ -5,6 +5,8 @@ class Contender
   include HasTotalTime
   include HasScore
   include HasPartialScores
+  include HasStats
+  include HasLapTimes
 
   embedded_in :event
 
