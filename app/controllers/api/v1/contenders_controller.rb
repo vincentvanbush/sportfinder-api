@@ -51,6 +51,7 @@ class Api::V1::ContendersController < ApplicationController
                                     :title,
                                     { squad_members: [] },
                                     :score,
+                                    :total_time,
                                     { partial_scores: [] },
                                     { lap_time: [] },
                                     { tennis_scores: { set_1: [ :gems_won, :tiebreak, :tiebreak_points ],
@@ -70,7 +71,7 @@ class Api::V1::ContendersController < ApplicationController
 	  	new_goals = contender_par[:stats][:goals] || []
 	  	old_goals = contender[:stats][:goals] || []
 	  	contender_par[:stats][:goals] = old_goals + new_goals
-		  
+
 		  new_subs = contender_par[:stats][:substitutions] || []
 		  old_subs = contender[:stats][:substitutions] || []
 		  contender_par[:stats][:substitutions] = old_subs + new_subs
@@ -87,7 +88,7 @@ class Api::V1::ContendersController < ApplicationController
 		  old_lap_times = contender[:lap_times] || []
 		  contender_par[:lap_times] = old_lap_times + new_lap_times
 
-      if contender_par.has_key?(:tennis_scores) 
+      if contender_par.has_key?(:tennis_scores)
         contender[:tennis_scores] ||= {}
         5.times do |i|
           key = "set_" + (i+1).to_s
