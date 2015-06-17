@@ -3,6 +3,14 @@ class ContenderSerializer < ActiveModel::Serializer
 
   def id() object.id.to_s end
 
+  def score
+    object.score || 0
+  end
+
+  def total_time
+    object.total_time || 0
+  end
+
   def include_squad_members?
   	['football','basketball','volleyball'].include?(object.event.discipline.title)
   end
