@@ -1,6 +1,83 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::ContendersController, type: :controller do
+	describe 'GET #show' do
+		let(:user) { FactoryGirl.create :user }
+		before(:each) do
+			api_authorization_header user.auth_token
+		end
+
+		let(:discipline) { FactoryGirl.create :discipline, title: 'football' }
+		let(:attrs) do
+		          team1 = { title: 'Arsenal', squad_members: ['Mertesacker', 'Ramsey', 'Wilshire']}
+		          team2 = { title: 'Liverpool', squad_members: ['Coutinho', 'Sturridge', 'Henderson']}
+		          FactoryGirl.attributes_for(:event)
+		                               .merge({ contenders: [team1, team2] })
+		                               .merge(discipline_id: discipline.id)
+		                               .merge(user_id: user.id)
+		end
+    let(:event) { Event.create(attrs) }
+
+    let(:contender_attributes) do
+			    	{ title: 'Chelsea', score: 3, squad_members: ['Hazard', 'Drogba', 'Mikel'],
+			    	stats: { goals: [{ scorer: 'Silva', minute: 34, penalty: false, own_goal: false }],
+		    						substitutions: [{ player_off: 'Hart', player_on: 'Dzeko', minute: 5 }]} }
+    end
+
+    before do
+    	patch :update, { discipline_id: discipline.slug,
+    										user_id: user.id,
+    										event_id: event.id, 
+    										id: event.contenders[1].id,
+    										contender: contender_attributes }
+		end
+
+		context 'for a contender that exists' do
+			before do
+				get :show, discipline_id: discipline.id, event_id: event.id, id: event.contenders[1].id
+			end
+
+			it 'returns info about contender' do
+				expect(json_response[:contender][:title]).to eql 'Chelsea'
+				expect(json_response[:contender][:score]).to eql 3
+				expect(json_response[:contender][:squad_members]).to have_exactly(3).items()
+				expect(json_response[:contender]).to have_key(:stats)
+				expect(json_response[:contender][:stats]).to have_key(:goals)
+				expect(json_response[:contender][:stats]).to have_key(:substitutions)
+				expect(json_response[:contender][:stats][:goals][0]).to have_key(:penalty)
+				expect(json_response[:contender][:stats][:goals][0][:penalty]).to eql false
+				expect(json_response[:contender][:stats][:substitutions][0]).to have_key(:player_on)
+				expect(json_response[:contender][:stats][:substitutions][0][:player_on]).to eql 'Dzeko'
+			end
+
+			it { should respond_with 200 }
+		end
+
+		context 'for a nonexistent discipline' do
+			before do
+				get :show, discipline_id: 'igas', event_id: event.id, id: event.contenders[1].id
+			end
+
+			it { should respond_with 404 }
+		end
+
+		context 'for a nonexistent event' do
+			before do
+				get :show, discipline_id: discipline.id, event_id: 'soga', id: event.contenders[1].id
+			end
+
+			it { should respond_with 404 }
+		end
+
+		context 'for a nonexistent contender' do
+			before do
+				get :show, discipline_id: discipline.id, event_id: event.id, id: 'sdkajg'
+			end
+
+			it { should respond_with 404 }
+		end
+	end
+
 	describe 'PATCH #update' do
 		let(:user) { FactoryGirl.create :user }
 
