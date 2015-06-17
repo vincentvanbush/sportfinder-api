@@ -50,12 +50,13 @@ class Api::V1::EventsController < ApplicationController
     event = Event.find(params[:id])
     not_found && return unless event.present?
 
-    # byebug
 
     event_par = event_params
     event_par[:finished?] = event_par.delete :finished if event_par.has_key?(:finished)
 
-    event.update(event_par)
+
+    # byebug
+    event.update_attributes(event_par)
     if event.save
       render json: event, status: 201, location: api_discipline_event_url(discipline, event)
     else
@@ -71,8 +72,7 @@ class Api::V1::EventsController < ApplicationController
         title = discipline.title if discipline.present?
         contender_params << { squad_members: [] } if ['football', 'volleyball', 'basketball'].include?(title)
         contender_params << :score if ['football', 'basketball', 'volleyball', 'tennis'].include?(title)
-        contender_params << { partial_scores: [ :set_1, :set_2, :set_3, :set_4, :set_5 ] } if ['volleyball'].include?(title)
-        contender_params << { partial_scores: [ :quarter_1, :quarter_2, :quarter_3, :quarter_4 ] } if ['basketball'].include?(title)
+        contender_params << { partial_scores: [] } if ['basketball', 'volleyball'].include?(title)
 
         tennis_set = [:gems_won, :tiebreak, :tiebreak_points]
         contender_params << { partial_scores: { set_1: tennis_set , set_2: tennis_set, set_3: tennis_set, set_4: tennis_set, set_5: tennis_set }} if ['tennis'].include?(title)
