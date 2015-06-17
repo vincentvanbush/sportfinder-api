@@ -12,7 +12,7 @@ Rails.application.routes.draw do
         resources :events, only: [:show, :index, :create, :update, :destroy] do
           resources :messages, only: [:index, :create, :update, :destroy]
           resources :votes, only: [:create]
-          resources :contenders, only: [:update]
+          resources :contenders, only: [:update, :show]
           resources :comments, only: [:create, :destroy, :index]
         end
       end

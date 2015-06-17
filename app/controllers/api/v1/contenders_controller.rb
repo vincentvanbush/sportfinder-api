@@ -2,6 +2,18 @@ class Api::V1::ContendersController < ApplicationController
   before_action :authenticate_with_token!, only: [:update]
   respond_to :json
 
+  def show
+    discipline = Discipline.find(params[:discipline_id])
+    not_found && return unless discipline.present?
+    event = Event.find(params[:event_id])
+    not_found && return unless event.present?
+    contender = event.contenders.find(params[:id])
+    not_found && return unless contender.present?
+
+    respond_with contender
+  end
+
+
   def update
   	discipline = Discipline.find(params[:discipline_id])
   	not_found && return unless discipline.present?
