@@ -6,11 +6,10 @@ class Api::V1::VotesController < ApplicationController
     not_found && return unless discipline.present?
     event = discipline.events.find(params[:event_id])
     not_found && return unless event.present?
-    user = User.find(params[:user_id])
-    not_found && return unless user.present?
 
     vote = event.votes.new(vote_params)
-    vote.user = user
+    vote.user = current_user
+
     if vote.save
       render json: vote,
              status: 201
