@@ -1,5 +1,5 @@
 class Api::V1::ContendersController < ApplicationController
-  # before_action :authenticate_with_token!, only: [:update]
+  before_action :authenticate_with_token!, only: [:update]
   respond_to :json
 
   def update
