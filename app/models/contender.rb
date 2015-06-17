@@ -7,6 +7,7 @@ class Contender
   include HasPartialScores
   include HasStats
   include HasLapTimes
+  include HasTennisScores
 
   embedded_in :event
 
