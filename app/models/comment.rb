@@ -20,4 +20,9 @@ class Comment
       errors.add(:user_id, 'cannot add another comment after his own one') if last_user == self.user
     end
   end
+
+  scope :after, ->(timestamp) {
+    datetime = DateTime.strptime(timestamp.to_s, '%s')
+    where(:created_at.gt => datetime)
+  }
 end

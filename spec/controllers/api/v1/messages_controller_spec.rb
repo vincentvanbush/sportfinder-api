@@ -44,7 +44,7 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
     context 'when is successfully created' do
       let(:event) { FactoryGirl.create :event }
 
-      before(:each) do 
+      before(:each) do
         api_authorization_header event.user.auth_token
       end
 
@@ -61,9 +61,9 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
 
     context 'when is not created' do
       context 'because of nonexistent' do
-        
+
         let(:event) { FactoryGirl.create :event }
-        before(:each) do 
+        before(:each) do
           api_authorization_header event.user.auth_token
         end
 
@@ -86,7 +86,7 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
       context 'becaue of validation errors' do
         let(:event) { FactoryGirl.create :event }
 
-        before(:each) do 
+        before(:each) do
           api_authorization_header event.user.auth_token
         end
 
@@ -109,7 +109,7 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
   describe 'PUT/PATCH #update' do
     let(:message) { FactoryGirl.create :message }
 
-    before(:each) do 
+    before(:each) do
       api_authorization_header message.event.user.auth_token
     end
     context 'when is successfully updated' do
@@ -184,7 +184,7 @@ RSpec.describe Api::V1::MessagesController, type: :controller do
   describe 'DELETE #destroy' do
     let(:message) { FactoryGirl.create :message }
 
-    before(:each) do 
+    before(:each) do
       api_authorization_header message.event.user.auth_token
     end
     before { delete :destroy, { discipline_id: message.event.discipline.slug,

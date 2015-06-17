@@ -7,11 +7,9 @@ class Api::V1::CommentsController < ApplicationController
     not_found && return unless discipline.present?
     event = discipline.events.find(params[:event_id])
     not_found && return unless event.present?
-    user = User.find(params[:user_id])
-    not_found && return unless user.present?
 
     comment = event.comments.new(comment_params)
-    comment.user = user
+    comment.user = current_user
     if comment.save
       render json: comment,
              status: 201,
@@ -31,6 +29,17 @@ class Api::V1::CommentsController < ApplicationController
 
     comment.destroy
     head 204
+  end
+
+  def index
+    discipline = Discipline.find(params[:discipline_id])
+    not_found && return unless discipline.present?
+    event = discipline.events.find(params[:event_id])
+    not_found && return unless event.present?
+
+    comments = event.comments
+    comments = comments.after(params[:after]) if params[:after]
+    respond_with comments
   end
 
   private
