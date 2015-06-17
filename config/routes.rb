@@ -13,6 +13,7 @@ Rails.application.routes.draw do
           resources :messages, only: [:index, :create, :update, :destroy]
           resources :votes, only: [:create]
           resources :comments, only: [:create, :destroy]
+          resources :contenders, only: [:update]
         end
       end
     end
