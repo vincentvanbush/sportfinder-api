@@ -14,4 +14,8 @@ class ApplicationController < ActionController::Base
   def not_authorized
   	render :json => {:error => "not-authorized"}.to_json, :status => 401
   end
+
+  def default_serializer_options
+    {root: false}
+  end
 end

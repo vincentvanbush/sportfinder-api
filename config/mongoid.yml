@@ -9,6 +9,7 @@ development:
       options:
   options:
     raise_not_found_error: false
+    include_root_in_json: false
 test:
   sessions:
     default:
@@ -23,6 +24,7 @@ test:
         retry_interval: 0
   options:
     raise_not_found_error: false
+    include_root_in_json: false
 production:
   sessions:
     default:
@@ -30,7 +32,7 @@ production:
      # replica set connection setup.
      # Use environment variables or a config file to keep your
      # credentials safe e.g. <%= ENV['MONGOLAB_URI'] %>.
-     
+
      # uri: <%= ENV['MONGOLAB_URI'] %>
       database: scorify_api_production
       hosts:
@@ -40,6 +42,7 @@ production:
 
 
       options:
+        include_root_in_json: false
        # max_retries specifies the number of times to attempt
        # an operation before giving up.
         max_retries: 30
